@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: banka
+  jpa:
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.id.new_generator_mappings: true
+      # modify batch size as necessary
+      hibernate:
+        ddl-auto: update   # checks the DB schema and updates if necessary
+    show-sql: true    # displaying sql scripts in console
+  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5431/bank
+    username: postgres
+    password: postgres
+
+server:
+  port: 8090   # exposing the port
+  servlet:
+    context-path: /api/v1      # appends this to every API url

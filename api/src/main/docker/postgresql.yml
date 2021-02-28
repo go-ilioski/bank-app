@@ -1,0 +1,11 @@
+version: '2'  # something do to with docker-compose version
+services:
+  bank-postgresql:            # name of docker image
+    image: postgres:11      # docker image
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=bank
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 5431:5432    # exposing ports, first one is what you need to point to, second one is the internal port within the docker container. IF it is 5430:5432, then we need to point to 5430 port in appliction.yml DB properties
