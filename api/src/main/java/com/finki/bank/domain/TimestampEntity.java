@@ -19,23 +19,23 @@ import java.time.Instant;
 //@EntityListeners(AuditingEntityListener.class)
 public abstract class TimestampEntity {
 
-    @CreatedBy
-    @Column(name = "created_by", nullable = false, length = 50, updatable = false)
-    @JsonIgnore
-    private String createdBy;
+//    @CreatedBy
+//    @Column(name = "created_by", nullable = false, length = 50, updatable = false)
+//    @JsonIgnore
+//    private String createdBy;
 
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     @JsonIgnore
     private Instant createdDate = Instant.now();
 
-    @LastModifiedBy
-    @Column(name = "update_by", length = 50)
-    @JsonIgnore
-    private String updatedBy;
+//    @LastModifiedBy
+//    @Column(name = "update_by", length = 50)
+//    @JsonIgnore
+//    private String updatedBy;
 
     @LastModifiedDate
     @Column(name = "updated_date")
     @JsonIgnore
-    private Instant modifiedBy = Instant.now();
+    private Instant updatedDate = Instant.now();
 }

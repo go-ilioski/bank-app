@@ -9,6 +9,7 @@ spring:
       hibernate:
         ddl-auto: update   # checks the DB schema and updates if necessary
     show-sql: true    # displaying sql scripts in console
+    generate-ddl: true
   datasource:
 #    type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:postgresql://localhost:5431/bank
@@ -18,4 +19,4 @@ spring:
 server:
   port: 8090   # exposing the port
   servlet:
-    context-path: /api/v1      # appends this to every API url
+    context-path: /api      # appends this to every API url
