@@ -3,6 +3,7 @@ package com.finki.bank.service.impl;
 import com.finki.bank.domain.Account;
 import com.finki.bank.domain.User;
 import com.finki.bank.repository.AccountRepository;
+import com.finki.bank.repository.UserRepository;
 import com.finki.bank.service.AccountService;
 import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.mapper.AccountMapper;
@@ -19,10 +20,12 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final UserRepository userRepository;
 
-    public AccountServiceImpl(AccountRepository accountRepository, AccountMapper accountMapper) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountMapper accountMapper, UserRepository userRepository) {
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -33,8 +36,9 @@ public class AccountServiceImpl implements AccountService {
         Account existingAccount = accountRepository.findById(accountDto.getId())
                 .orElseThrow(EntityNotFoundException::new);
         //TODO: sredi
-        User owner = userRepository.findByid(accountDto.getOwnerId())
-                .orElseThrow( EntityNotFoundException);
+        User owner = userRepository.findById(accountDto.getOwnerId())
+                .orElseThrow(EntityNotFoundException::new);
+//                .orElseThrow( () -> new EntityNotFoundException());
         account.setOwner(owner);
 
 
@@ -47,6 +51,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountDto> findAll() {
         return accountRepository.findAll().stream()
                 .map(accountMapper::convertToDto)
+//                .map(x -> accountMapper.convertToDto(x))
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 

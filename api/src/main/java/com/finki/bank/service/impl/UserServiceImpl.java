@@ -1,31 +1,38 @@
-package com.finki.bank.service;
+package com.finki.bank.service.impl;
 
 import com.finki.bank.domain.User;
 import com.finki.bank.domain.enumerations.Role;
 import com.finki.bank.repository.UserRepository;
+import com.finki.bank.security.CurrentUserService;
+import com.finki.bank.service.UserService;
 import com.finki.bank.service.dto.RegisterUserDto;
 import com.finki.bank.service.dto.UserDto;
+import com.finki.bank.service.dto.UserPublicDetailsDto;
 import com.finki.bank.service.exceptions.EmailAlreadyUsedException;
 import com.finki.bank.service.mapper.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
-public class UsersService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final CurrentUserService currentUserService;
 
-
-    public UsersService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, CurrentUserService currentUserService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         //this.cacheManager = cacheManager;
         this.userMapper = userMapper;
+        this.currentUserService = currentUserService;
     }
 
     public UserDto registerUser(RegisterUserDto userDTO) {
@@ -55,6 +62,7 @@ public class UsersService {
         return userMapper.convertToDto(createdUser);
     }
 
+
     private boolean removeNonActivatedUser(User existingUser) {
         if (existingUser.isActivated()) {
             return false;
@@ -65,4 +73,43 @@ public class UsersService {
         return true;
     }
 
+    public List<UserPublicDetailsDto> userSearch(String search) {
+        User user = currentUserService.getUser();
+        return userMapper
+                .convertToUserPublicDetailsDtos(userRepository.findAllByEmailStartsWithIgnoreCase(search));
+    }
+
+
+    @Override
+    public List<UserPublicDetailsDto> addFavouriteUser(Long favoriteUserId) {
+        User currentUser = currentUserService.getUser();
+        User favoriteUser = userRepository.findById(favoriteUserId).orElseThrow(EntityNotFoundException::new);
+        currentUser.getFavouriteUsers().add(favoriteUser);
+        userRepository.save(currentUser);
+        return userMapper.convertToUserPublicDetailsDtos(currentUser.getFavouriteUsers());
+    }
+
+    @Override
+    public List<UserPublicDetailsDto> findAllFavouriteUsers(Long userId) {
+        User user = userRepository.findOneWithEagerRelationships(userId).orElseThrow(EntityNotFoundException::new);
+        return userMapper.convertToUserPublicDetailsDtos(user.getFavouriteUsers());
+//                .stream()
+//                .map(usersMapper::toDto)
+//                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+//    @Override
+//    public Page<UserDto> findAllWithEagerRelationships(Pageable pageable) {
+//        return null;
+//    }
+
+    @Override
+    public Optional<UserDto> findOne(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
 }

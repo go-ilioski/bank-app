@@ -4,7 +4,7 @@ import com.finki.bank.domain.Account;
 import com.finki.bank.domain.User;
 import com.finki.bank.domain.enumerations.Currency;
 import com.finki.bank.service.dto.UserDto;
-import com.finki.bank.service.dto.UserSearchDto;
+import com.finki.bank.service.dto.UserPublicDetailsDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +28,9 @@ public class UserMapper {
         return user;
     }
 
-    public UserSearchDto convertToSearchUser(User user) {
+    public UserPublicDetailsDto convertToUserPublicDetails(User user) {
         ModelMapper mapper = new ModelMapper();
-        UserSearchDto userDto = mapper.map(user, UserSearchDto.class);
+        UserPublicDetailsDto userDto = mapper.map(user, UserPublicDetailsDto.class);
         Account defaultAccount = user.getAccounts()
                 .stream()
                 .filter(account -> account.getCurrency().equals(Currency.MKD))
@@ -39,13 +39,17 @@ public class UserMapper {
         userDto.setAccountId(defaultAccount != null ? defaultAccount.getId() : null);
         return userDto;
     }
-
+    //??
     public List<UserDto> convertToDto(List<User> userList){
         return userList.stream().map(x -> convertToDto(x)).collect(Collectors.toList());
     }
-
+    //??
     public List<User> convertToUser(List<UserDto> userDtos){
         return userDtos.stream().map(x -> convertToUser(x)).collect(Collectors.toList());
+    }
+
+    public List<UserPublicDetailsDto> convertToUserPublicDetailsDtos(List<User> userList){
+        return userList.stream().map(x -> convertToUserPublicDetails(x)).collect(Collectors.toList());
     }
 
 }

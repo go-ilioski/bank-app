@@ -1,5 +1,6 @@
 package com.finki.bank.domain;
 
+import com.finki.bank.domain.enumerations.TransactionType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,7 +15,8 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String type;
+
+    private TransactionType type;
 
     private String status;
 

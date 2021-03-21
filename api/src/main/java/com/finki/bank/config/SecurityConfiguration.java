@@ -1,54 +1,54 @@
 package com.finki.bank.config;
 
+import com.finki.bank.security.jwt.JWTConfigurer;
+import com.finki.bank.security.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @EnableWebSecurity
 //@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    //private final TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
-//    private final CorsFilter corsFilter;
+    public SecurityConfiguration(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
 
-//    public SecurityConfiguration(CorsFilter corsFilter) {
-//        this.tokenProvider = tokenProvider;
-//        this.corsFilter = corsFilter;
-//    }
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/management/**", config);
+        source.registerCorsConfiguration("/v2/api-docs", config);
+        return new CorsFilter(source);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring()
-                .antMatchers(HttpMethod.OPTIONS, "/**")
-                .antMatchers("/app/**/*.{js,html}")
-                .antMatchers("/i18n/**")
-                .antMatchers("/content/**")
-                .antMatchers("/h2-console/**")
-                .antMatchers("/swagger-ui/index.html")
-                .antMatchers("/test/**");
-    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
-        http
-            .csrf()
-            .disable()
-            .authorizeRequests()
-            .antMatchers("/api/users").permitAll();
-}
+//    @Override
+//    public void configure(WebSecurity web) {
+//        web.ignoring()
+//                .antMatchers(HttpMethod.OPTIONS, "/**")
+//                .antMatchers("/app/**/*.{js,html}")
+//                .antMatchers("/i18n/**")
+//                .antMatchers("/content/**")
+//                .antMatchers("/h2-console/**")
+//                .antMatchers("/swagger-ui/index.html")
+//                .antMatchers("/test/**");
+//    }
 
 //    @Override
 //    public void configure(HttpSecurity http) throws Exception {
@@ -56,8 +56,33 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //        http
 //            .csrf()
 //            .disable()
-//            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-//            .exceptionHandling()
+//            .authorizeRequests()
+//            .antMatchers("/api/users").permitAll();
+//}
+//    @Override
+//    protected void configure(HttpSecurity httpSecurity) throws Exception {
+//        // We don't need CSRF for this example
+//        httpSecurity.csrf().disable()
+//                // dont authenticate this particular request
+//                .authorizeRequests().antMatchers("/authenticate").permitAll().
+//                // all other requests need to be authenticated
+//                        anyRequest().authenticated().and().
+//                // make sure we use stateless session; session won't be used to
+//                // store user's state.
+//                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//
+//        // Add a filter to validate the tokens with every request
+//        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//    }
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        // @formatter:off
+        http
+            .csrf()
+            .disable()
+            .addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling()
 //                .authenticationEntryPoint(problemSupport)
 //                .accessDeniedHandler(problemSupport)
 //        .and()
@@ -73,26 +98,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //        .and()
 //            .sessionManagement()
 //            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//        .and()
-//            .authorizeRequests()
-//            .antMatchers("/api/authenticate").permitAll()
-//            .antMatchers("/api/register").permitAll()
+        .and()
+            .authorizeRequests()
+            .antMatchers("/api/authenticate").permitAll()
+            .antMatchers("/api/users/register").permitAll()
 //            .antMatchers("/api/activate").permitAll()
 //            .antMatchers("/api/account/reset-password/init").permitAll()
 //            .antMatchers("/api/account/reset-password/finish").permitAll()
-//            .antMatchers("/api/**").authenticated()
-//            .antMatchers("/management/health").permitAll()
-//            .antMatchers("/management/info").permitAll()
-//            .antMatchers("/management/prometheus").permitAll()
-//            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-//        .and()
-//            .httpBasic()
-//        .and()
-//            .apply(securityConfigurerAdapter());
-//        // @formatter:on
-//    }
+            .antMatchers("/api/**").authenticated()
+        .and()
+            .httpBasic()
+        .and()
+            .apply(securityConfigurerAdapter());
+        // @formatter:on
+    }
 
-//    private JWTConfigurer securityConfigurerAdapter() {
-//        return new JWTConfigurer(tokenProvider);
-//    }
+    private JWTConfigurer securityConfigurerAdapter() {
+        return new JWTConfigurer(tokenProvider);
+    }
 }

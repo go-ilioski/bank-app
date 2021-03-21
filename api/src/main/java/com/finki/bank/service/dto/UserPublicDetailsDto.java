@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserSearchDto implements Serializable {
+public class UserPublicDetailsDto implements Serializable {
 
     private String firstName;
 

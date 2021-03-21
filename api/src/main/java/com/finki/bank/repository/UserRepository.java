@@ -14,9 +14,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
 
-    @Query(value = "select distinct users from User users left join fetch users.favouriteUsers",
-            countQuery = "select count(distinct users) from User users")
-    Page<User> findAllWithEagerRelationships(Pageable pageable);
+//    @Query(value = "select distinct users from User users left join fetch users.favouriteUsers",
+//            countQuery = "select count(distinct users) from User users")
+//    Page<User> findAllWithEagerRelationships(Pageable pageable);
 
     @Query("select distinct users from User users left join fetch users.favouriteUsers")
     List<User> findAllWithEagerRelationships();
@@ -25,4 +25,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findOneWithEagerRelationships(@Param("id") Long id);
 
     Optional<User> findOneByEmailIgnoreCase(String email);
+
+    List<User> findAllByEmailStartsWithIgnoreCase(String search);
+
+
 }

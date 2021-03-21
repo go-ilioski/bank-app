@@ -20,3 +20,12 @@ server:
   port: 8090   # exposing the port
   servlet:
     context-path: /api      # appends this to every API url
+  error:
+    include-message: always
+
+
+jwt:
+  secret: YNB7a8LvJosCYeBoYhvfaETcVTs7nWOY3IVWLvWC3Su3EGecc6lEb8kZgjQiG5vG
+  # Token is valid 24 hours
+  token.validity.seconds: 86400000
+

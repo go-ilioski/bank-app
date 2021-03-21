@@ -6,7 +6,9 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -53,6 +55,6 @@ public class User extends TimestampEntity{
     @JoinTable(name = "user_favourites",
         joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "favourite_id",referencedColumnName = "id"))
-    private Set<User> favouriteUsers = new HashSet<>();
+    private List<User> favouriteUsers = new ArrayList<>();
 
 }
