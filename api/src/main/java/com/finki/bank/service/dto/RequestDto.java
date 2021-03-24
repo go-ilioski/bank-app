@@ -1,7 +1,6 @@
 package com.finki.bank.service.dto;
 
 import com.finki.bank.domain.Account;
-import com.sun.source.doctree.SerialDataTree;
 import lombok.Data;
 
 import java.io.Serializable;

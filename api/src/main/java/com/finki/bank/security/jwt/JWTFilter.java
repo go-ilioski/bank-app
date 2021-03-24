@@ -1,9 +1,8 @@
 package com.finki.bank.security.jwt;
 
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -18,6 +17,7 @@ import java.io.IOException;
  * Filters incoming requests and installs a Spring Security principal if a header corresponding to a valid user is
  * found.
  */
+@Component
 public class JWTFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";

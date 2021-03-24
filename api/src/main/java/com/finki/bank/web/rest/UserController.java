@@ -27,8 +27,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping()
-    //@PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PostMapping("/register")
+    //@PreAuthorize("hasAuthority(\"" + "ADMIN" + "\")")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody RegisterUserDto userDTO) throws URISyntaxException {
         //log.debug("REST request to save User : {}", userDTO);
 

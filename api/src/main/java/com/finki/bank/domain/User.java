@@ -49,7 +49,7 @@ public class User extends TimestampEntity{
     private Role role;
 
     @OneToMany(mappedBy = "owner")
-    private Set<Account> accounts = new HashSet<>();
+    private List<Account> accounts = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "user_favourites",
