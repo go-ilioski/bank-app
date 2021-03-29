@@ -21,7 +21,11 @@ public class RequestDto implements Serializable {
 
     private String type;
 
-    private AccountDto fromAccount;
+    private Long fromAccountId;
 
-    private AccountDto toAccount;
+    private String fromAccountEmail;
+
+    private Long toAccountId;
+
+    private String toAccountEmail;
 }

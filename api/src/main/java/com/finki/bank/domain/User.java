@@ -6,10 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -57,4 +54,36 @@ public class User extends TimestampEntity{
         inverseJoinColumns = @JoinColumn(name = "favourite_id",referencedColumnName = "id"))
     private List<User> favouriteUsers = new ArrayList<>();
 
+//    @Transient
+//    private Account getDefaultAccount() {
+//        if (accounts == null) {
+//            return null;
+//        }
+//        return accounts.stream().filter().findFirst().orElse(null);
+//    }
+
+    @Transient
+    private Account getAccountById(Long id) {
+        if (id == null) {
+            return null;
+        }
+        if (accounts == null) {
+            return null;
+        }
+        return accounts.stream().filter(x -> x.getId().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id);
+    }
 }

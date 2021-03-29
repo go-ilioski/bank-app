@@ -1,13 +1,17 @@
 package com.finki.bank.web.rest;
 
 import com.finki.bank.service.UserService;
+import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.dto.RegisterUserDto;
 import com.finki.bank.service.dto.UserDto;
 import com.finki.bank.service.dto.UserPublicDetailsDto;
+import com.finki.bank.util.Constants;
 import com.finki.bank.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,7 +32,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    //@PreAuthorize("hasAuthority(\"" + "ADMIN" + "\")")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    //@PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody RegisterUserDto userDTO) throws URISyntaxException {
         //log.debug("REST request to save User : {}", userDTO);
 
@@ -45,7 +51,15 @@ public class UserController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")")
     public ResponseEntity<List<UserPublicDetailsDto>> searchUsers(@RequestParam String email){
         return ResponseEntity.ok().body(userService.userSearch(email));
+    }
+
+    @GetMapping("accounts")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    public ResponseEntity<List<AccountDto>> getUserAccounts(){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.listUserAccounts());
     }
 }

@@ -25,10 +25,10 @@ public class TransactionDto implements Serializable {
 
     private Long fromAccountId;
 
-    private String fromAccountOwner;
+    private String fromAccountEmail;
 
     private Long toAccountId;
 
-    private String toAccountOwner;
+    private String toAccountEmail;
 
 }

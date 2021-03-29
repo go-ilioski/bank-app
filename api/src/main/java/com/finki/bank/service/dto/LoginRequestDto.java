@@ -20,6 +20,4 @@ public class LoginRequestDto {
     @Size(min = 4, max = 100)
     private String password;
 
-
-
 }

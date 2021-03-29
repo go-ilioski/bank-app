@@ -9,10 +9,12 @@ public interface AccountService {
 
     AccountDto save(AccountDto accountDto);
 
-    List<AccountDto> findAll();
+    //List<AccountDto> findAll();
 
     Optional<AccountDto> findOne(Long id);
 
     void delete(Long id);
+
+    AccountDto updateStatus(String status,Long id);
 
 }

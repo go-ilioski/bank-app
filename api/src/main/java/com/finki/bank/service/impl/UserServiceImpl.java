@@ -5,10 +5,12 @@ import com.finki.bank.domain.enumerations.Role;
 import com.finki.bank.repository.UserRepository;
 import com.finki.bank.security.CurrentUserService;
 import com.finki.bank.service.UserService;
+import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.dto.RegisterUserDto;
 import com.finki.bank.service.dto.UserDto;
 import com.finki.bank.service.dto.UserPublicDetailsDto;
 import com.finki.bank.service.exceptions.EmailAlreadyUsedException;
+import com.finki.bank.service.mapper.AccountMapper;
 import com.finki.bank.service.mapper.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,13 +28,15 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final CurrentUserService currentUserService;
+    private final AccountMapper accountMapper;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, CurrentUserService currentUserService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, CurrentUserService currentUserService, AccountMapper accountMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         //this.cacheManager = cacheManager;
         this.userMapper = userMapper;
         this.currentUserService = currentUserService;
+        this.accountMapper = accountMapper;
     }
 
     public UserDto registerUser(RegisterUserDto userDTO) {
@@ -77,6 +81,22 @@ public class UserServiceImpl implements UserService {
         User user = currentUserService.getUser();
         return userMapper
                 .convertToUserPublicDetailsDtos(userRepository.findAllByEmailStartsWithIgnoreCase(search));
+    }
+
+    public UserDto updateUser(UserDto userDto) {
+        User user = currentUserService.getUser();
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        return userMapper.convertToDto(user);
+    }
+
+    public List<AccountDto> listUserAccounts(){
+        if(currentUserService.getUserId() == null){
+            throw new RuntimeException();
+        }
+        //TODO: sto ako e prazna listata
+        return accountMapper.convertToDto(currentUserService.getUser().getAccounts());
+
     }
 
 

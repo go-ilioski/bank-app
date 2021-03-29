@@ -18,7 +18,7 @@ public class AccountMapper {
 
         ModelMapper mapper = new ModelMapper();
         AccountDto accountDto = mapper.map(account,AccountDto.class);
-
+        accountDto.setOwnerFirstName(account.getOwner().getFirstName() + " " + account.getOwner().getLastName());
         return accountDto;
     }
 
@@ -27,6 +27,9 @@ public class AccountMapper {
         ModelMapper mapper = new ModelMapper();
         Account account = mapper.map(accountDto, Account.class);
         return account;
+    }
+    public List<AccountDto> convertToDto(List<Account> accountList){
+        return accountList.stream().map(x -> convertToDto(x)).collect(Collectors.toList());
     }
 
 
