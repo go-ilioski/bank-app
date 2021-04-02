@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
-    List<Transaction> getTransactionsByCreatedDateBetweenAndAmountBetweenOrderByCreatedDateDesc(LocalDate startDate, LocalDate endDate, BigDecimal startAmount, BigDecimal endAmount);
+    List<Transaction> getTransactionsByCreatedDateBetweenAndAmountBetweenAndFromAccount_IdOrToAccount_IdOrderByCreatedDateDesc(LocalDate startDate, LocalDate endDate, BigDecimal startAmount, BigDecimal endAmount);
 
     List<Transaction> findFirst10getTransactionsByCreatedDateBetweenAndAmountBetweenOrderByCreatedDateDesc(LocalDate startDate, LocalDate endDate, BigDecimal startAmount, BigDecimal endAmount);
 }

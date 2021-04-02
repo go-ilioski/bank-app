@@ -60,7 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
                 break;
 
             case PAYMENT:
-
+                transaction = paymentTransaction(transaction,currentUser,fromAccount, toAccount);
                 break;
 
             case WITHDRAW:
@@ -68,9 +68,6 @@ public class TransactionServiceImpl implements TransactionService {
                 break;
 
         }
-
-
-
 
         transaction = transactionRepository.save(transaction);
         return transactionMapper.convertToDto(transaction);
@@ -137,8 +134,52 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     }
-    private Transaction paymentTransaction(Transaction transaction){
-        return null;
+    private Transaction paymentTransaction(Transaction transaction, User currentUser ,Optional<Account> optionalFromAccount, Optional<Account> optionalToAccount){
+        if(optionalFromAccount.isEmpty()){
+            throw new EntityNotFoundException();
+        }
+        Account fromAccount = optionalFromAccount.get();
+
+        if(!fromAccount.getOwner().equals(currentUser)){
+            throw new TransactionException("owner does not have this acc!!");
+        }
+        if(!AccountStatusType.ACTIVE.equals(fromAccount.getStatus())){
+            throw new TransactionException("Your account is not active. Please activate your account to proceed.");
+        }
+
+        if(!fromAccount.getCurrency().equals(transaction.getCurrency())){
+            throw new TransactionException("Your currency does not match.");
+        }
+
+
+        if(optionalToAccount.isEmpty()){
+            throw new EntityNotFoundException();
+        }
+        Account toAccount = optionalToAccount.get();
+
+        if(!AccountStatusType.ACTIVE.equals(toAccount.getStatus())){
+            throw new TransactionException("This account is not active. You can't make transactions with inactive accounts.");
+        }
+
+        if(!toAccount.getCurrency().equals(transaction.getCurrency())){
+            throw new TransactionException("Account currency does not match, to the account you want to make a payment to.");
+        }
+
+        BigDecimal commision = getCommision(transaction);
+        transaction.setCommission(commision);
+
+        subtractFundsFromAccount(fromAccount, transaction);
+        transaction.setFromAccount(fromAccount);
+        accountRepository.save(fromAccount);
+
+        addFundsToAccount(toAccount,transaction);
+        transaction.setToAccount(toAccount);
+        accountRepository.save(toAccount);
+
+        transaction.setStatus(TransactionStatus.SUCCESSFUL);
+
+        return transaction;
+
     }
 
     private BigDecimal getCommision(Transaction transaction) {
@@ -148,7 +189,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void addFundsToAccount(Account account, Transaction transaction) {
-        account.setBalance(account.getBalance().add(transaction.getAmount().add(transaction.getCommission())));
+        account.setBalance(account.getBalance().add(transaction.getAmount()));
     }
 
     private void subtractFundsFromAccount(Account account, Transaction transaction) {

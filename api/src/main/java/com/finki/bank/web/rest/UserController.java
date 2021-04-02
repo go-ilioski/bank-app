@@ -32,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
-            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+//    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+//            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
     //@PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody RegisterUserDto userDTO) throws URISyntaxException {
         //log.debug("REST request to save User : {}", userDTO);
@@ -51,7 +51,8 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
     public ResponseEntity<List<UserPublicDetailsDto>> searchUsers(@RequestParam String email){
         return ResponseEntity.ok().body(userService.userSearch(email));
     }
