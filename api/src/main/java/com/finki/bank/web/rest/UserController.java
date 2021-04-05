@@ -1,10 +1,12 @@
 package com.finki.bank.web.rest;
 
+import com.finki.bank.security.CurrentUserService;
 import com.finki.bank.service.UserService;
 import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.dto.RegisterUserDto;
 import com.finki.bank.service.dto.UserDto;
 import com.finki.bank.service.dto.UserPublicDetailsDto;
+import com.finki.bank.service.mapper.UserMapper;
 import com.finki.bank.util.Constants;
 import com.finki.bank.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
@@ -27,8 +29,14 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final CurrentUserService currentUserService;
+
+    private final UserMapper userMapper;
+
+    public UserController(UserService userService, CurrentUserService currentUserService, UserMapper userMapper) {
         this.userService = userService;
+        this.currentUserService = currentUserService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/register")
@@ -62,5 +70,12 @@ public class UserController {
             + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
     public ResponseEntity<List<AccountDto>> getUserAccounts(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.listUserAccounts());
+    }
+
+    @GetMapping("/authenticated")
+    @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
+    public ResponseEntity<UserDto> getAuthenticatedUser() {
+        UserDto userDto = userMapper.convertToDto(currentUserService.getUser());
+        return ResponseEntity.ok(userDto);
     }
 }

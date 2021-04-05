@@ -103,8 +103,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction;
     }
 
-
-
     private Transaction withdrawTransaction(Transaction transaction, User currentUser ,Optional<Account> optionalFromAccount){
         if(optionalFromAccount.isEmpty()){
             throw new EntityNotFoundException();
@@ -131,9 +129,8 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setStatus(TransactionStatus.SUCCESSFUL);
 
         return transaction;
-
-
     }
+
     private Transaction paymentTransaction(Transaction transaction, User currentUser ,Optional<Account> optionalFromAccount, Optional<Account> optionalToAccount){
         if(optionalFromAccount.isEmpty()){
             throw new EntityNotFoundException();
@@ -179,7 +176,6 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setStatus(TransactionStatus.SUCCESSFUL);
 
         return transaction;
-
     }
 
     private BigDecimal getCommision(Transaction transaction) {
@@ -199,8 +195,5 @@ public class TransactionServiceImpl implements TransactionService {
         }
         account.setBalance(account.getBalance().subtract(amountToSubtract));
     }
-
-
-
 
 }

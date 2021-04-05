@@ -36,20 +36,20 @@ public class TransactionController {
 
     }
 
-    @GetMapping("/search")
-    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
-            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
-    public ResponseEntity<String> getTransactions(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
-                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate){
-//        if(transactionDto.getId() != null){
-//            throw new BadRequestAlertException();
-//        }
+//    @GetMapping("/search")
+//    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+//            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+//    public ResponseEntity<String> getTransactions(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
+//                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate){
+////        if(transactionDto.getId() != null){
+////            throw new BadRequestAlertException();
+////        }
+////
+////        TransactionDto newDepositTransaction = transactionService.save(transactionDto);
+//        String searcDateString = searchStartDate.toString();
+////        searchStartDate.to
 //
-//        TransactionDto newDepositTransaction = transactionService.save(transactionDto);
-        String searcDateString = searchStartDate.toString();
-        searchStartDate.to
-
-        return ResponseEntity.status(HttpStatus.OK).body(searcDateString);
-
-    }
+//        return ResponseEntity.status(HttpStatus.OK).body(searcDateString);
+//
+//    }
 }
