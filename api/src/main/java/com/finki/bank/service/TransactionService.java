@@ -1,10 +1,16 @@
 package com.finki.bank.service;
 
+import com.finki.bank.service.dto.ResultTransactionDto;
 import com.finki.bank.service.dto.TransactionDto;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public interface TransactionService {
 
-    TransactionDto save(TransactionDto transactionDto);
+    ResultTransactionDto save(TransactionDto transactionDto);
+
+    List<ResultTransactionDto> search(LocalDate startDate, LocalDate endDate, Long id);
 
 
 }

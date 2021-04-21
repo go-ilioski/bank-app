@@ -26,6 +26,7 @@ public class Transaction extends TimestampEntity {
     @Column(name = "amount", precision = 21, scale = 2)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
     private String description;

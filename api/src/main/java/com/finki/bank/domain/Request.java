@@ -1,6 +1,7 @@
 package com.finki.bank.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.finki.bank.domain.enumerations.Currency;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,8 +25,9 @@ public class Request extends TimestampEntity {
     @Column(name = "amount", precision = 21, scale = 2)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "currency")
-    private String currency;
+    private Currency currency;
 
     @Column(name = "description")
     private String description;

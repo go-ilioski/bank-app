@@ -13,6 +13,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @MappedSuperclass
@@ -27,7 +28,7 @@ public abstract class TimestampEntity {
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     @JsonIgnore
-    private Instant createdDate = Instant.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
 //    @LastModifiedBy
 //    @Column(name = "update_by", length = 50)
@@ -37,5 +38,5 @@ public abstract class TimestampEntity {
     @LastModifiedDate
     @Column(name = "updated_date")
     @JsonIgnore
-    private Instant updatedDate = Instant.now();
+    private LocalDateTime updatedDate = LocalDateTime.now();
 }

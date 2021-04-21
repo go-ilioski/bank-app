@@ -4,6 +4,7 @@ import com.finki.bank.domain.Account;
 import com.finki.bank.domain.Transaction;
 import com.finki.bank.domain.User;
 import com.finki.bank.domain.enumerations.AccountStatusType;
+import com.finki.bank.domain.enumerations.Role;
 import com.finki.bank.domain.enumerations.TransactionStatus;
 import com.finki.bank.domain.enumerations.TransactionType;
 import com.finki.bank.repository.AccountRepository;
@@ -11,6 +12,7 @@ import com.finki.bank.repository.TransactionRepository;
 import com.finki.bank.security.CurrentUserService;
 import com.finki.bank.service.AccountService;
 import com.finki.bank.service.TransactionService;
+import com.finki.bank.service.dto.ResultTransactionDto;
 import com.finki.bank.service.dto.TransactionDto;
 import com.finki.bank.service.exceptions.TransactionException;
 import com.finki.bank.service.mapper.TransactionMapper;
@@ -20,6 +22,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,7 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDto save(TransactionDto transactionDto) {
+    public ResultTransactionDto save(TransactionDto transactionDto) {
         //log.debug("Request to save Transactions : {}", transactionsDTO);
         Transaction transaction = transactionMapper.convertToTransaction(transactionDto);
         User currentUser = currentUserService.getUser();
@@ -70,7 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         transaction = transactionRepository.save(transaction);
-        return transactionMapper.convertToDto(transaction);
+        return transactionMapper.convertToResultDto(transaction);
     }
 
     private Transaction depositTransaction(Transaction transaction, User currentUser, Optional<Account> optionalToAccount){
@@ -105,7 +111,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction withdrawTransaction(Transaction transaction, User currentUser ,Optional<Account> optionalFromAccount){
         if(optionalFromAccount.isEmpty()){
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException("Account not found");
         }
         Account fromAccount = optionalFromAccount.get();
 
@@ -196,4 +202,19 @@ public class TransactionServiceImpl implements TransactionService {
         account.setBalance(account.getBalance().subtract(amountToSubtract));
     }
 
+    ///////////////////search
+
+    @Override
+    public List<ResultTransactionDto> search(LocalDate startDate, LocalDate endDate, Long id) {
+
+        User currentUser = currentUserService.getUser();
+        if (Role.ADMIN != currentUser.getRole() && currentUser.getAccounts().stream().noneMatch(account -> account.getId().equals(id))) {
+            throw new TransactionException("owner does not have this acc!!");
+        }
+
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+
+        return transactionMapper.convertToResultDtos(transactionRepository.findTransactionByCreatedDate(id,startDateTime,endDateTime));
+    }
 }

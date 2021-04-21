@@ -1,5 +1,6 @@
 package com.finki.bank.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.finki.bank.domain.Account;
 import lombok.Data;
 
@@ -7,8 +8,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionDto implements Serializable {
-
     private Long id;
 
     private String type;
@@ -21,14 +22,8 @@ public class TransactionDto implements Serializable {
 
     private String description;
 
-    private BigDecimal commission;
-
     private Long fromAccountId;
 
-    private String fromAccountEmail;
-
     private Long toAccountId;
-
-    private String toAccountEmail;
 
 }
