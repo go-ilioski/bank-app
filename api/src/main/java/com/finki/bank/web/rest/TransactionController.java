@@ -75,7 +75,7 @@ public class TransactionController {
 //            throw new BadRequestAlertException();
 //        }
 
-        if(searchStartDate.isAfter(LocalDate.now()) || searchEndDate.isAfter(searchEndDate)){
+        if(searchStartDate.isAfter(LocalDate.now()) || searchEndDate.isBefore(searchStartDate)){
             throw new BadRequestAlertException("Invalid Date input");
         }
 
