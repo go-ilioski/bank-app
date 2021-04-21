@@ -16,6 +16,8 @@ import com.finki.bank.service.dto.ResultTransactionDto;
 import com.finki.bank.service.dto.TransactionDto;
 import com.finki.bank.service.exceptions.TransactionException;
 import com.finki.bank.service.mapper.TransactionMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -216,5 +218,20 @@ public class TransactionServiceImpl implements TransactionService {
         LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
 
         return transactionMapper.convertToResultDtos(transactionRepository.findTransactionByCreatedDate(id,startDateTime,endDateTime));
+    }
+
+    @Override
+    public Page<ResultTransactionDto> searchPageable(Pageable pageable, LocalDate startDate, LocalDate endDate, Long id) {
+
+        User currentUser = currentUserService.getUser();
+        if (Role.ADMIN != currentUser.getRole() && currentUser.getAccounts().stream().noneMatch(account -> account.getId().equals(id))) {
+            throw new TransactionException("owner does not have this acc!!");
+        }
+
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+
+        return transactionRepository.findTransactionsPageable(pageable, id,startDateTime,endDateTime)
+                .map(transactionMapper::convertToResultDto);
     }
 }

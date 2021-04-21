@@ -5,7 +5,10 @@ import com.finki.bank.service.dto.ResultTransactionDto;
 import com.finki.bank.service.dto.TransactionDto;
 import com.finki.bank.util.Constants;
 import com.finki.bank.web.rest.errors.BadRequestAlertException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,5 +58,27 @@ public class TransactionController {
         List<ResultTransactionDto> searchDateTransactions = transactionService.search(searchStartDate,searchEndDate,id);
 
         return ResponseEntity.status(HttpStatus.OK).body(searchDateTransactions);
+    }
+
+    @GetMapping("/search/page")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    public ResponseEntity<List<ResultTransactionDto>> getTransactionsPageable(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
+                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate,
+                                                                      Long id,
+                                                                      Pageable pageable){
+//        if(transactionDto.getId() != null){
+//            throw new BadRequestAlertException();
+//        }
+
+        if(searchStartDate.isAfter(LocalDate.now()) || searchEndDate.isAfter(searchEndDate)){
+            throw new BadRequestAlertException("Invalid Date input");
+        }
+
+        Page<ResultTransactionDto> page = transactionService.searchPageable(pageable, searchStartDate,searchEndDate,id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(Constants.TOTAL_COUNTS_HEADER, Long.toString(page.getTotalElements()));
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(page.getContent());
     }
 }
