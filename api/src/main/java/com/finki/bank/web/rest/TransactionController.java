@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 import java.util.List;
@@ -42,31 +43,34 @@ public class TransactionController {
 
     }
 
-    @GetMapping("/search")
-    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
-            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
-    public ResponseEntity<List<ResultTransactionDto>> getTransactions(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
-                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate, Long id){
-//        if(transactionDto.getId() != null){
-//            throw new BadRequestAlertException();
+//    @GetMapping("/search")
+//    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+//            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+//    public ResponseEntity<List<ResultTransactionDto>> getTransactions(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
+//                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate, Long id){
+////        if(transactionDto.getId() != null){
+////            throw new BadRequestAlertException();
+////        }
+//
+//        if(searchStartDate.isAfter(LocalDate.now()) || searchEndDate.isAfter(searchEndDate)){
+//            throw new BadRequestAlertException("Invalid Date input");
 //        }
-
-        if(searchStartDate.isAfter(LocalDate.now()) || searchEndDate.isAfter(searchEndDate)){
-            throw new BadRequestAlertException("Invalid Date input");
-        }
-
-        List<ResultTransactionDto> searchDateTransactions = transactionService.search(searchStartDate,searchEndDate,id);
-
-        return ResponseEntity.status(HttpStatus.OK).body(searchDateTransactions);
-    }
+//
+//        List<ResultTransactionDto> searchDateTransactions = transactionService.search(searchStartDate,searchEndDate,id);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(searchDateTransactions);
+//    }
 
     @GetMapping("/search/page")
     @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
             + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
     public ResponseEntity<List<ResultTransactionDto>> getTransactionsPageable(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
-                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate,
-                                                                      Long id,
-                                                                      Pageable pageable){
+                                                                              @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate,
+                                                                              Long id,
+                                                                              Pageable pageable,
+                                                                              @RequestParam(required = false) BigDecimal startAmount,
+                                                                              @RequestParam(required = false) BigDecimal endAmount
+                                                                              ){
 //        if(transactionDto.getId() != null){
 //            throw new BadRequestAlertException();
 //        }
@@ -75,7 +79,7 @@ public class TransactionController {
             throw new BadRequestAlertException("Invalid Date input");
         }
 
-        Page<ResultTransactionDto> page = transactionService.searchPageable(pageable, searchStartDate,searchEndDate,id);
+        Page<ResultTransactionDto> page = transactionService.searchPageable(pageable, searchStartDate,searchEndDate,id,startAmount,endAmount);
         HttpHeaders headers = new HttpHeaders();
         headers.add(Constants.TOTAL_COUNTS_HEADER, Long.toString(page.getTotalElements()));
 

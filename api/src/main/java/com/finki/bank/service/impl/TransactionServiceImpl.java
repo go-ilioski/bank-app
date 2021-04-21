@@ -206,8 +206,29 @@ public class TransactionServiceImpl implements TransactionService {
 
     ///////////////////search
 
+//    @Override
+//    public List<ResultTransactionDto> search(LocalDate startDate, LocalDate endDate, Long id) {
+//
+//        User currentUser = currentUserService.getUser();
+//        if (Role.ADMIN != currentUser.getRole() && currentUser.getAccounts().stream().noneMatch(account -> account.getId().equals(id))) {
+//            throw new TransactionException("owner does not have this acc!!");
+//        }
+//
+//        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
+//        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
+//
+//
+//
+//        return transactionMapper.convertToResultDtos(transactionRepository.findTransactionByCreatedDate(id,startDateTime,endDateTime,));
+//    }
+
     @Override
-    public List<ResultTransactionDto> search(LocalDate startDate, LocalDate endDate, Long id) {
+    public Page<ResultTransactionDto> searchPageable(Pageable pageable,
+                                                     LocalDate startDate,
+                                                     LocalDate endDate,
+                                                     Long id,
+                                                     BigDecimal startAmount,
+                                                     BigDecimal endAmount) {
 
         User currentUser = currentUserService.getUser();
         if (Role.ADMIN != currentUser.getRole() && currentUser.getAccounts().stream().noneMatch(account -> account.getId().equals(id))) {
@@ -217,21 +238,7 @@ public class TransactionServiceImpl implements TransactionService {
         LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
         LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
 
-        return transactionMapper.convertToResultDtos(transactionRepository.findTransactionByCreatedDate(id,startDateTime,endDateTime));
-    }
-
-    @Override
-    public Page<ResultTransactionDto> searchPageable(Pageable pageable, LocalDate startDate, LocalDate endDate, Long id) {
-
-        User currentUser = currentUserService.getUser();
-        if (Role.ADMIN != currentUser.getRole() && currentUser.getAccounts().stream().noneMatch(account -> account.getId().equals(id))) {
-            throw new TransactionException("owner does not have this acc!!");
-        }
-
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-
-        return transactionRepository.findTransactionsPageable(pageable, id,startDateTime,endDateTime)
+        return transactionRepository.findTransactionsPageable(pageable, id,startDateTime,endDateTime,startAmount,endAmount)
                 .map(transactionMapper::convertToResultDto);
     }
 }
