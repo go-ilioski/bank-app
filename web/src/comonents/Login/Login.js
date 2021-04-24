@@ -1,6 +1,8 @@
 import React from "react";
 import {Button, Container, Form} from "react-bootstrap";
 import {withAuthContext} from "../../context/AuthContext";
+import './Login.css';
+import {withRouter} from "react-router-dom";
 
 class Login extends React.Component {
 
@@ -9,11 +11,12 @@ class Login extends React.Component {
 
         this.state = {
             email: "",
-            password: ""
+            password: "",
+            error: false
         }
     }
     render() {
-        // console.log(this.state);
+        const {error} = this.state;
         return (
           <Container>
               <Form>
@@ -36,6 +39,13 @@ class Login extends React.Component {
                       />
                   </Form.Group>
 
+                  {
+                      error ?
+                          <div className='error'>
+                              Wrong credentials
+                          </div> :
+                          ""
+                  }
                   <Button variant="primary" type="button" onClick={this.handleSubmit}>
                       Login
                   </Button>
@@ -45,7 +55,7 @@ class Login extends React.Component {
     }
 
     handleSubmit = () => {
-        const {login} = this.props;
+        const {login, history} = this.props;
         const {email, password} = this.state;
 
         const credentials = {
@@ -54,16 +64,20 @@ class Login extends React.Component {
         }
 
         login(credentials)
-            .then(res => {console.log(res, "LOGGED IN")})
-            .catch(ex => {console.log(ex, "FAILED LOG IN")});
+            .then(res => {
+                history.push('/');
+            })
+            .catch(ex => {
+                this.setState({error: true});
+            });
     }
 
     handleChange = (event) => {
-        let newState = {};
+        let newState = {error: false};
         newState[event.target.name] = event.target.value;
 
         this.setState(newState)
     }
 }
 
-export default withAuthContext(Login);
+export default withRouter(withAuthContext(Login));

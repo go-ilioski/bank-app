@@ -23,6 +23,9 @@ export class AuthProvider extends React.Component {
             isAuthenticated: !!getAccessToken(),
             loggedInUser: null
         };
+    }
+
+    componentDidMount() {
         if(this.state.isAuthenticated){
             getAuthenticatedUser().then(response => {
                 this.setState({

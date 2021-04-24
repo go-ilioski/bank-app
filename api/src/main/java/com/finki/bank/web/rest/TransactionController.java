@@ -62,12 +62,12 @@ public class TransactionController {
 //        return ResponseEntity.status(HttpStatus.OK).body(searchDateTransactions);
 //    }
 
-    @GetMapping("/search/page")
+    @GetMapping("/{id}/search/page")
     @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
             + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
     public ResponseEntity<List<ResultTransactionDto>> getTransactionsPageable(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
                                                                               @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate,
-                                                                              Long id,
+                                                                              @PathVariable Long id,
                                                                               Pageable pageable,
                                                                               @RequestParam(required = false) BigDecimal startAmount,
                                                                               @RequestParam(required = false) BigDecimal endAmount

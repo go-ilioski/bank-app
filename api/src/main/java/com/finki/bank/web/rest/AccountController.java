@@ -58,7 +58,7 @@ public class AccountController {
     }
 
 
-    //TODO: delete mapping pred da brisi da se withrdawna parite od acc balance -> sepak samo disable na acc ke napravime
+    //TODO: delete mapp ing pred da brisi da se withrdawna parite od acc balance -> sepak samo disable na acc ke napravime
 
 
 //    @GetMapping("/merchants")
