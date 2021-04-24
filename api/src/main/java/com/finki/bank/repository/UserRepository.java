@@ -1,6 +1,7 @@
 package com.finki.bank.repository;
 
 import com.finki.bank.domain.User;
+import com.finki.bank.domain.enumerations.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +28,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findOneByEmailIgnoreCase(String email);
 
     List<User> findAllByEmailStartsWithIgnoreCase(String search);
+
+    List<User> findAllByRole(Role role);
 
 
 }

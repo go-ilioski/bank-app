@@ -30,8 +30,9 @@ public class TransactionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
-            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+//    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+//            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
     public ResponseEntity<ResultTransactionDto> processTransaction(@RequestBody TransactionDto transactionDto){
         if(transactionDto.getId() != null){
             throw new BadRequestAlertException();

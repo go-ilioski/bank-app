@@ -1,6 +1,9 @@
 package com.finki.bank.web.rest;
 
+import com.finki.bank.domain.enumerations.Currency;
+import com.finki.bank.domain.enumerations.Role;
 import com.finki.bank.security.CurrentUserService;
+import com.finki.bank.service.AccountService;
 import com.finki.bank.service.UserService;
 import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.dto.RegisterUserDto;
@@ -33,10 +36,13 @@ public class UserController {
 
     private final UserMapper userMapper;
 
-    public UserController(UserService userService, CurrentUserService currentUserService, UserMapper userMapper) {
+    private final AccountService accountService;
+
+    public UserController(UserService userService, CurrentUserService currentUserService, UserMapper userMapper, AccountService accountService) {
         this.userService = userService;
         this.currentUserService = currentUserService;
         this.userMapper = userMapper;
+        this.accountService = accountService;
     }
 
     @PostMapping("/register")
@@ -73,9 +79,47 @@ public class UserController {
     }
 
     @GetMapping("/authenticated")
-    @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
+    //@PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
     public ResponseEntity<UserDto> getAuthenticatedUser() {
         UserDto userDto = userMapper.convertToDto(currentUserService.getUser());
         return ResponseEntity.ok(userDto);
     }
+
+    @PostMapping("/register/merchant")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")")
+    public ResponseEntity<UserDto> createMerchant(@Valid @RequestBody RegisterUserDto userDTO) throws URISyntaxException {
+        //log.debug("REST request to save User : {}", userDTO);
+
+        if (userDTO.getId() != null) {
+            log.error("Request provides nonnull id");
+            throw new BadRequestAlertException();
+            // Lowercase the user login before comparing with database
+        }
+
+        userDTO.setRole(Role.MERCHANT.name());
+        UserDto newUser = userService.registerUser(userDTO);
+
+        AccountDto accountDto = new AccountDto();
+        accountDto.setCurrency(Currency.MKD.name());
+        accountDto.setOwnerId(newUser.getId());
+        accountService.save(accountDto);
+
+
+        //mailService.sendCreationEmail(newUser);
+        return ResponseEntity.created(new URI("/api/users/" + newUser.getEmail()))
+//                .headers(HeaderUtil.createAlert(applicationName,  "A user is created with identifier " + newUser.getLogin(), newUser.getLogin()))
+                .body(newUser);
+    }
+
+
+    @GetMapping("merchants")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    public ResponseEntity<List<UserPublicDetailsDto>> getAllMerchants(){
+        return ResponseEntity.ok().body(userService.listAllMerchants());
+    }
+
+
+
+
 }

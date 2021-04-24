@@ -99,6 +99,11 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public List<UserPublicDetailsDto> listAllMerchants() {
+        return userMapper.convertToUserPublicDetailsDtos(userRepository.findAllByRole(Role.MERCHANT));
+    }
+
 
     @Override
     public List<UserPublicDetailsDto> addFavouriteUser(Long favoriteUserId) {
@@ -132,4 +137,6 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
+
+
 }

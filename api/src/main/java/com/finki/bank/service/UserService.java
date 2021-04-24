@@ -1,5 +1,6 @@
 package com.finki.bank.service;
 
+import com.finki.bank.domain.enumerations.Role;
 import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.dto.RegisterUserDto;
 import com.finki.bank.service.dto.UserDto;
@@ -27,6 +28,8 @@ public interface UserService {
     List<UserPublicDetailsDto> findAllFavouriteUsers(Long userId);
 
     List<AccountDto> listUserAccounts();
+
+    List<UserPublicDetailsDto> listAllMerchants();
 
 
 }

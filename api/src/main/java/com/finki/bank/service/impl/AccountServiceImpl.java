@@ -37,15 +37,32 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto save(AccountDto accountDto) {
-        Account registerAccount = accountMapper.convertToAccount(accountDto);
+        User ownerOfAccount;
+        if (accountDto.getOwnerId() == null) {
+            ownerOfAccount = currentUserService.getUser();
+        } else {
+            ownerOfAccount = userRepository.findById(accountDto.getOwnerId()).orElseThrow(EntityNotFoundException::new);
+        }
+        return createAccount(accountDto, ownerOfAccount);
 
-        User ownerOfAccount = currentUserService.getUser();
+    }
+//
+//    @Override
+//    public AccountDto save(AccountDto accountDto, Long ownerId) {
+//
+//        return createAccount(accountDto, ownerOfAccount);
+//
+//    }
+
+    private AccountDto createAccount(AccountDto accountDto, User ownerOfAccount) {
+        Account registerAccount = accountMapper.convertToAccount(accountDto);
 
 //        if(!ownerOfAccount.getAccounts().isEmpty()){
 //            throw new AccountAlreadyExistsException();
 //        }
         Currency accCurrency = registerAccount.getCurrency();
 
+        //dali veke ima acc so mkd ili eur -> ako ima stop
         if(ownerOfAccount.getAccounts()
                 .stream()
                 .anyMatch( acc -> accCurrency.equals(acc.getCurrency()))){
@@ -65,8 +82,8 @@ public class AccountServiceImpl implements AccountService {
 
         registerAccount = accountRepository.save(registerAccount);
         return accountMapper.convertToDto(registerAccount);
-
     }
+
 
 //    @Override
 //    public List<AccountDto> findAll() {
@@ -100,6 +117,10 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findById(id)
                 .map(accountMapper::convertToDto);
     }
+
+//    public List<AccountDto> getAllMerchants(){
+//        return accountMapper.convertToDto(accountRepository.findAccountsByOwner_Role_Merchant());
+//    }
 
     @Override
     public void delete(Long id) {
