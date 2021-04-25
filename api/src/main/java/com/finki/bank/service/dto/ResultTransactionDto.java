@@ -14,5 +14,5 @@ public class ResultTransactionDto extends TransactionDto implements Serializable
 
     private String toAccountOwnerEmail;
 
-    private LocalDateTime createdDate;
+    private String createdDate;
 }

@@ -83,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction depositTransaction(Transaction transaction, User currentUser, Optional<Account> optionalToAccount){
        // if (optionalToAccount.get().getOwner().getId().equals(currentUser.getId()))
-        if(optionalToAccount.isEmpty()){
+        if(!optionalToAccount.isPresent()){
             throw new EntityNotFoundException();
         }
         Account toAccount = optionalToAccount.get();
@@ -112,7 +112,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Transaction withdrawTransaction(Transaction transaction, User currentUser ,Optional<Account> optionalFromAccount){
-        if(optionalFromAccount.isEmpty()){
+        if(!optionalFromAccount.isPresent()){
             throw new EntityNotFoundException("Account not found");
         }
         Account fromAccount = optionalFromAccount.get();
@@ -140,7 +140,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Transaction paymentTransaction(Transaction transaction, User currentUser ,Optional<Account> optionalFromAccount, Optional<Account> optionalToAccount){
-        if(optionalFromAccount.isEmpty()){
+        if(!optionalFromAccount.isPresent()){
             throw new EntityNotFoundException();
         }
         Account fromAccount = optionalFromAccount.get();
@@ -157,7 +157,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
 
-        if(optionalToAccount.isEmpty()){
+        if(!optionalToAccount.isPresent()){
             throw new EntityNotFoundException();
         }
         Account toAccount = optionalToAccount.get();

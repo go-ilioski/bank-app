@@ -25,7 +25,9 @@ public interface UserService {
 
     List<UserPublicDetailsDto> addFavouriteUser(Long favoriteUserId);
 
-    List<UserPublicDetailsDto> findAllFavouriteUsers(Long userId);
+    void removeFavouriteUser(Long favoriteUserId);
+
+    List<UserPublicDetailsDto> findAllFavouriteUsers();
 
     List<AccountDto> listUserAccounts();
 

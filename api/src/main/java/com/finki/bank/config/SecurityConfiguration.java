@@ -53,13 +53,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-//    .and()
-//            .authorizeRequests()
-//            .antMatchers("/api/authenticate").permitAll()
-//            .antMatchers("/api/users/register").permitAll()
-////            .antMatchers("/api/activate").permitAll()
-//            .antMatchers("/api/**").authenticated()
-
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         // We don't need CSRF for this example

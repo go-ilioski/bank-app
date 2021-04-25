@@ -119,7 +119,27 @@ public class UserController {
         return ResponseEntity.ok().body(userService.listAllMerchants());
     }
 
+    @GetMapping("favorites")
+    @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
+    public ResponseEntity<List<UserPublicDetailsDto>> getAllFavorites(){
+        return ResponseEntity.ok().body(userService.findAllFavouriteUsers());
+    }
 
+    @PostMapping("favorites")
+    @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
+    public ResponseEntity<List<UserPublicDetailsDto>> addFavorite(@RequestBody UserPublicDetailsDto request) {
+        Long userId = request.getId();
+        if (userId == null) {
+            throw new BadRequestAlertException("No user id provided");
+        }
+        return ResponseEntity.ok().body(userService.addFavouriteUser(userId));
+    }
 
+    @DeleteMapping("favorites/{id}")
+    @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
+    public ResponseEntity<Void> removeFavorite(@PathVariable Long id) {
+        userService.removeFavouriteUser(id);
+        return ResponseEntity.ok().build();
+    }
 
 }

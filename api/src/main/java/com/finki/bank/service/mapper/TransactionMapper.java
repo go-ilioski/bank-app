@@ -1,13 +1,12 @@
 package com.finki.bank.service.mapper;
 
-import com.finki.bank.domain.Account;
 import com.finki.bank.domain.Transaction;
-import com.finki.bank.service.dto.AccountDto;
 import com.finki.bank.service.dto.ResultTransactionDto;
 import com.finki.bank.service.dto.TransactionDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +24,8 @@ public class TransactionMapper {
 
         ModelMapper mapper = new ModelMapper();
         ResultTransactionDto transactionDto = mapper.map(transaction,ResultTransactionDto.class);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        transactionDto.setCreatedDate(transaction.getCreatedDate().format(formatter));
         return transactionDto;
     }
 

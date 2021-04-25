@@ -12,6 +12,7 @@ import com.finki.bank.service.dto.UserPublicDetailsDto;
 import com.finki.bank.service.exceptions.EmailAlreadyUsedException;
 import com.finki.bank.service.mapper.AccountMapper;
 import com.finki.bank.service.mapper.UserMapper;
+import com.finki.bank.web.rest.errors.BadRequestAlertException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -104,10 +105,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.convertToUserPublicDetailsDtos(userRepository.findAllByRole(Role.MERCHANT));
     }
 
-
     @Override
     public List<UserPublicDetailsDto> addFavouriteUser(Long favoriteUserId) {
         User currentUser = currentUserService.getUser();
+        boolean userAlreadyFavorite = currentUser.getFavouriteUsers().stream()
+                .anyMatch(user -> user.getId().equals(favoriteUserId));
+        if (userAlreadyFavorite) {
+            throw new BadRequestAlertException("User already a favorite.");
+        }
         User favoriteUser = userRepository.findById(favoriteUserId).orElseThrow(EntityNotFoundException::new);
         currentUser.getFavouriteUsers().add(favoriteUser);
         userRepository.save(currentUser);
@@ -115,18 +120,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserPublicDetailsDto> findAllFavouriteUsers(Long userId) {
-        User user = userRepository.findOneWithEagerRelationships(userId).orElseThrow(EntityNotFoundException::new);
-        return userMapper.convertToUserPublicDetailsDtos(user.getFavouriteUsers());
-//                .stream()
-//                .map(usersMapper::toDto)
-//                .collect(Collectors.toCollection(LinkedList::new));
+    public void removeFavouriteUser(Long favoriteUserId) {
+        User currentUser = currentUserService.getUser();
+        User favoriteUserToRemove = currentUser.getFavouriteUsers().stream()
+                .filter(user -> user.getId().equals(favoriteUserId))
+                .findFirst().orElse(null);
+        if (favoriteUserToRemove == null) {
+            throw new BadRequestAlertException("User does not exist as favorite.");
+        }
+        currentUser.getFavouriteUsers().remove(favoriteUserToRemove);
+        userRepository.save(currentUser);
     }
 
-//    @Override
-//    public Page<UserDto> findAllWithEagerRelationships(Pageable pageable) {
-//        return null;
-//    }
+    @Override
+    public List<UserPublicDetailsDto> findAllFavouriteUsers() {
+        User currentUser = currentUserService.getUser();
+        User user = userRepository.findOneWithEagerRelationships(currentUser.getId()).orElseThrow(EntityNotFoundException::new);
+        return userMapper.convertToUserPublicDetailsDtos(user.getFavouriteUsers());
+    }
+
 
     @Override
     public Optional<UserDto> findOne(Long id) {

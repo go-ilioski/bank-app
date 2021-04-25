@@ -9,6 +9,8 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserPublicDetailsDto implements Serializable {
 
+    private Long id;
+
     private String firstName;
 
     private String lastName;
@@ -16,6 +18,5 @@ public class UserPublicDetailsDto implements Serializable {
     private String email;
 
     private Long accountId;
-
 
 }

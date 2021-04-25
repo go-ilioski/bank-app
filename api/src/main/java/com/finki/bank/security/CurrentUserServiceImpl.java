@@ -23,46 +23,12 @@ public class CurrentUserServiceImpl implements CurrentUserService {
         return getUser().getId();
 
     }
-//
-//    public Set<Authority> getUserAuthorities() {
-//        return getUser().getAuthorities();
-//    }
-//
-//    public Set<String> getUserAuthoritiesStrings() {
-//        return getUser().getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
-//    }
-//
-//    public boolean isOwner() {
-//        return getUserAuthoritiesStrings().contains(AuthoritiesConstants.RESTAURANT);
-//    }
-//
-//    public boolean isMobileUser() {
-//        return getUserAuthoritiesStrings().contains(AuthoritiesConstants.USER);
-//    }
-//
-//    public boolean isAdmin() {
-//        return getUserAuthoritiesStrings().contains(AuthoritiesConstants.ADMIN);
-//    }
 
     public User getUser() {
         return getCurrentUserLogin()
             .flatMap(userRepository::findOneByEmailIgnoreCase)
             .orElseThrow(() -> new RuntimeException("Current user login not found"));
     }
-
-//    public User getUserWithPreferences() {
-//        return SecurityUtils.getCurrentUserLogin()
-//            .flatMap(userRepository::findOneWithPreferencesByLogin)
-//            .orElseThrow(() -> new RuntimeException("Current user login not found"));
-//    }
-//
-//    public User saveUser(User user) {
-//        return userRepository.save(user);
-//    }
-//
-//    public boolean isCurrentUserAdminOrOwner(Long userId) {
-//        return isAdmin() || userId.equals(getUserId());
-//    }
 
     private static Optional<String> getCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
