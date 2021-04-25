@@ -1,6 +1,6 @@
 import React from 'react';
-import {getAccountTransactions} from "../../service/transactionService";
-import {Card, Pagination, Table} from "react-bootstrap";
+import {getAccountTransactions, getAccountTransactionsReport} from "../../service/transactionService";
+import {Button, Card, Pagination, Table} from "react-bootstrap";
 import Loader from "../Loader/Loader";
 
 class Account extends React.Component {
@@ -15,7 +15,7 @@ class Account extends React.Component {
             size: 5,
             sort: 'createdDate,amount,desc',
             searchStartDate: '15-02-2021',
-            searchEndDate: '25-04-2021'
+            searchEndDate: '28-04-2021'
         };
     }
 
@@ -140,6 +140,23 @@ class Account extends React.Component {
             )
     }
 
+    renderReport = () => {
+        const {accountId} = this.props;
+        const {
+            searchStartDate,
+            searchEndDate
+        } = this.state;
+        getAccountTransactionsReport(
+            accountId,
+            searchStartDate,
+            searchEndDate
+        ).then(() => {
+            this.setState({
+                loading: false
+            })
+        })
+    }
+
     render() {
         console.log(this.state.transactionsCount);
         const {loading} = this.state;
@@ -151,6 +168,12 @@ class Account extends React.Component {
                     </Card.Title>
                     <Loader loading={loading} render={this.renderTransactionTable}/>
                 </Card.Body>
+                <Button
+                    variant="primary"
+                    onClick={() => {
+                        this.renderReport()
+                    }}
+                >Export Jasper</Button>
             </Card>
         );
     }

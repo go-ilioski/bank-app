@@ -30,7 +30,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("select transactions from Transaction transactions " +
             "where (transactions.toAccount.id =:id or transactions.fromAccount.id =:id) " +
             "and (transactions.createdDate between :startDate and :endDate) " +
-//            "and (transactions.amount between :startAmount and :endAmount)")
             "and (:startAmount is null or transactions.amount >= :startAmount)" +
                         "and (:endAmount is null or transactions.amount <= :endAmount)")
     Page<Transaction> findTransactionsPageable(Pageable pageable,

@@ -16,18 +16,31 @@ import com.finki.bank.service.dto.ResultTransactionDto;
 import com.finki.bank.service.dto.TransactionDto;
 import com.finki.bank.service.exceptions.TransactionException;
 import com.finki.bank.service.mapper.TransactionMapper;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -204,24 +217,6 @@ public class TransactionServiceImpl implements TransactionService {
         account.setBalance(account.getBalance().subtract(amountToSubtract));
     }
 
-    ///////////////////search
-
-//    @Override
-//    public List<ResultTransactionDto> search(LocalDate startDate, LocalDate endDate, Long id) {
-//
-//        User currentUser = currentUserService.getUser();
-//        if (Role.ADMIN != currentUser.getRole() && currentUser.getAccounts().stream().noneMatch(account -> account.getId().equals(id))) {
-//            throw new TransactionException("owner does not have this acc!!");
-//        }
-//
-//        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIDNIGHT);
-//        LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX);
-//
-//
-//
-//        return transactionMapper.convertToResultDtos(transactionRepository.findTransactionByCreatedDate(id,startDateTime,endDateTime,));
-//    }
-
     @Override
     public Page<ResultTransactionDto> searchPageable(Pageable pageable,
                                                      LocalDate startDate,
@@ -240,5 +235,31 @@ public class TransactionServiceImpl implements TransactionService {
 
         return transactionRepository.findTransactionsPageable(pageable, id,startDateTime,endDateTime,startAmount,endAmount)
                 .map(transactionMapper::convertToResultDto);
+    }
+
+    @Override
+    public String exportReport(List<ResultTransactionDto> transactions) throws FileNotFoundException, JRException {
+        String path = "C:\\Users\\Goran\\Finki-projects\\Bank-app\\api\\src\\main\\resources";
+
+        //load file and compile it
+        File file = ResourceUtils.getFile("classpath:transactions.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(transactions);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Bank App");
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        JasperExportManager.exportReportToPdfFile(jasperPrint, path + "\\transactions.pdf");
+        return "Report generated in path : " + path;
+    }
+
+    @Override
+    public void exportReport(List<ResultTransactionDto> transactions, OutputStream outputStream) throws FileNotFoundException, JRException {
+        File file = ResourceUtils.getFile("classpath:transactions.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(transactions);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Bank App");
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
     }
 }

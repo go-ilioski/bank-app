@@ -21,10 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.FileNotFoundException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,8 +39,6 @@ public class TransactionController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
-//            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
     @PreAuthorize("hasAuthority(\"" + Constants.USER_ROLE + "\")")
     public ResponseEntity<ResultTransactionDto> processTransaction(@RequestBody TransactionDto transactionDto){
         if(transactionDto.getId() != null){
@@ -52,24 +51,6 @@ public class TransactionController {
 
     }
 
-//    @GetMapping("/search")
-//    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
-//            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
-//    public ResponseEntity<List<ResultTransactionDto>> getTransactions(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
-//                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate, Long id){
-////        if(transactionDto.getId() != null){
-////            throw new BadRequestAlertException();
-////        }
-//
-//        if(searchStartDate.isAfter(LocalDate.now()) || searchEndDate.isAfter(searchEndDate)){
-//            throw new BadRequestAlertException("Invalid Date input");
-//        }
-//
-//        List<ResultTransactionDto> searchDateTransactions = transactionService.search(searchStartDate,searchEndDate,id);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(searchDateTransactions);
-//    }
-
     @GetMapping("/{id}/search/page")
     @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
             + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
@@ -79,7 +60,50 @@ public class TransactionController {
                                                                               Pageable pageable,
                                                                               @RequestParam(required = false) BigDecimal startAmount,
                                                                               @RequestParam(required = false) BigDecimal endAmount
-                                                                              ){
+    ) {
+        Page<ResultTransactionDto> page = searchTransactions(searchStartDate, searchEndDate, id, pageable, startAmount, endAmount);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(Constants.TOTAL_COUNTS_HEADER, Long.toString(page.getTotalElements()));
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(page.getContent());
+    }
+
+    @GetMapping("/{id}/search/report")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    public void getTransactionsReportDownload(HttpServletResponse httpServletResponse,
+                                              @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
+                                              @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate,
+                                              @PathVariable Long id,
+                                              Pageable pageable,
+                                              @RequestParam(required = false) BigDecimal startAmount,
+                                              @RequestParam(required = false) BigDecimal endAmount
+    ) throws JRException, IOException {
+        Page<ResultTransactionDto> page = searchTransactions(searchStartDate, searchEndDate, id, pageable, startAmount, endAmount);
+
+        httpServletResponse.setContentType("application/x-download");
+        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"transactions.pdf\"");
+        OutputStream out = httpServletResponse.getOutputStream();
+        transactionService.exportReport(page.getContent(), out);
+    }
+
+    @GetMapping("/{id}/search/report/generate")
+    @PreAuthorize("hasAuthority(\"" + Constants.ADMIN_ROLE + "\")"
+            + "|| hasAuthority(\"" + Constants.USER_ROLE + "\")" )
+    public ResponseEntity<String> getTransactionsReportGenerate(@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchStartDate,
+                                                                @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate searchEndDate,
+                                                                @PathVariable Long id,
+                                                                Pageable pageable,
+                                                                @RequestParam(required = false) BigDecimal startAmount,
+                                                                @RequestParam(required = false) BigDecimal endAmount
+    ) throws JRException, IOException {
+        Page<ResultTransactionDto> page = searchTransactions(searchStartDate, searchEndDate, id, pageable, startAmount, endAmount);
+
+        String result = transactionService.exportReport(page.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    private Page<ResultTransactionDto> searchTransactions(@DateTimeFormat(pattern = "dd-MM-yyyy") @RequestParam(required = false) LocalDate searchStartDate, @DateTimeFormat(pattern = "dd-MM-yyyy") @RequestParam(required = false) LocalDate searchEndDate, @PathVariable Long id, Pageable pageable, @RequestParam(required = false) BigDecimal startAmount, @RequestParam(required = false) BigDecimal endAmount) {
         if (searchEndDate == null) {
             searchEndDate = LocalDate.now();
         }
@@ -90,10 +114,6 @@ public class TransactionController {
             throw new BadRequestAlertException("Invalid Date input");
         }
 
-        Page<ResultTransactionDto> page = transactionService.searchPageable(pageable, searchStartDate,searchEndDate,id,startAmount,endAmount);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(Constants.TOTAL_COUNTS_HEADER, Long.toString(page.getTotalElements()));
-
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(page.getContent());
+        return transactionService.searchPageable(pageable, searchStartDate,searchEndDate,id,startAmount,endAmount);
     }
 }
