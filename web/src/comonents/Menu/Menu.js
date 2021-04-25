@@ -13,15 +13,15 @@ class Menu extends React.Component{
         return (
             <>
                 <Navbar bg="dark" variant="dark">
-                    <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+                    <Navbar.Brand href="/">My Accounts</Navbar.Brand>
                     <Nav className="mr-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#features">Features</Nav.Link>
-                        <Nav.Link href="#pricing">Pricing</Nav.Link>
+                        <Nav.Link href="/favorites">Favorites</Nav.Link>
+                        {/*<Nav.Link href="#features">Features</Nav.Link>*/}
+                        {/*<Nav.Link href="#pricing">Pricing</Nav.Link>*/}
                     </Nav>
                     <Form inline>
-                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                        <Button variant="outline-info">Search</Button>
+                        {/*<FormControl type="text" placeholder="Search" className="mr-sm-2" />*/}
+                        {/*<Button variant="outline-info">Search</Button>*/}
                         <Button variant="danger" onClick={this.handleLogout}>Log Out</Button>
                     </Form>
                 </Navbar>

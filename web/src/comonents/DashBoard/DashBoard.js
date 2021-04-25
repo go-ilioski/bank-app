@@ -69,6 +69,12 @@ class DashBoard extends React.Component {
             (
                 <p>
                     Currently you have no accounts.
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            this.props.history.push(`/accountcreate`)
+                        }}
+                    >Create Account</Button>
                 </p>
             )
     }

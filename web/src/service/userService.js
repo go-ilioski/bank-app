@@ -13,3 +13,15 @@ export const register = (user) => {
 export const getUserAccounts = () => {
     return axios.get(`${apiUri}/accounts`);
 }
+
+export const getFavorites = () => {
+    return axios.get(`${apiUri}/favorites`);
+}
+
+export const addFavorite = (id) => {
+    return axios.post(`${apiUri}/favorites`, id);
+}
+
+export const removeFavorite = (id) => {
+    return axios.delete(`${apiUri}/favorites/${id}`, id);
+}
