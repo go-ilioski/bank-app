@@ -95,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto updateStatus(String status,Long id){
-        if(id == null || !accountRepository.findById(id).isPresent())
+        if(id == null || accountRepository.findById(id).isEmpty())
             throw new RuntimeException();
 
         //TODO: proveri ata dali e dobro i dali mozi so pomalce povici do baza
