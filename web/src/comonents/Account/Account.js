@@ -69,7 +69,7 @@ class Account extends React.Component {
             pageCount;
 
         let items = [];
-        for (let i = startPage - 1; i <= endPage; i++) {
+        for (let i = startPage - 1; i <= endPage-1; i++) {
             items.push(
                 <Pagination.Item
                     key={`pagination-${i}`}
@@ -93,6 +93,7 @@ class Account extends React.Component {
                     <td>{transaction.createdDate}</td>
                     <td>{transaction.description}</td>
                     <td>{transaction.type}</td>
+                    <td>{transaction.fromAccountOwnerEmail}</td>
                     <td>{transaction.toAccountOwnerEmail}</td>
                     <td>{transaction.status}</td>
                 </tr>
@@ -102,7 +103,7 @@ class Account extends React.Component {
 
     renderTransactionTable = () => {
         const {transactions} = this.state;
-        return transactions && transactions.length ?
+        return transactions && transactions.length-1 ?
             (
                 <>
                     <Table striped bordered hover>
@@ -114,6 +115,7 @@ class Account extends React.Component {
                             <th>On</th>
                             <th>Description</th>
                             <th>Type</th>
+                            <th>From</th>
                             <th>To</th>
                             <th>Status</th>
                         </tr>
@@ -123,11 +125,11 @@ class Account extends React.Component {
                         </tbody>
                     </Table>
                     <Pagination>
-                        <Pagination.First/>
-                        <Pagination.Prev/>
+                        {/*<Pagination.First/>*/}
+                        {/*<Pagination.Prev/>*/}
                         {this.renderPaginationItems()}
-                        <Pagination.Next/>
-                        <Pagination.Last/>
+                        {/*<Pagination.Next/>*/}
+                        {/*<Pagination.Last/>*/}
                     </Pagination>
                 </>
             ) :
