@@ -48,5 +48,8 @@ export const getAccountTransactionsReport = (
     if (endAmount) {
         optionalParamsString += `&endAmount=${endAmount}`;
     }
-    return axios.get(`${apiUri}/${accountId}/search/report/generate?sort=createdDate,desc${optionalParamsString}`);
+    const config = {
+        responseType: 'blob'
+    };
+    return axios.get(`${apiUri}/${accountId}/search/report?sort=createdDate,desc${optionalParamsString}`, config);
 }
