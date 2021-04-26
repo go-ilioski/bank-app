@@ -1,6 +1,7 @@
 import React from "react";
 import {Button, Container, Form} from "react-bootstrap";
 import {createAccount} from "../../service/accountService";
+import {withRouter} from 'react-router-dom';
 
 class CreateAccount extends React.Component {
 
@@ -8,7 +9,7 @@ class CreateAccount extends React.Component {
         super(props);
 
         this.state = {
-            currency: "",
+            currency: "MKD",
             error: undefined
         }
     }
@@ -19,16 +20,14 @@ class CreateAccount extends React.Component {
           <Container>
               <Form>
                   <Form.Group>
-                      <Form.Label>Choose Currency</Form.Label>
-                      {/*<Form.Control*/}
-                      {/*    type="text"*/}
-                      {/*    placeholder="First Name"*/}
-                      {/*    name="currency"*/}
-                      {/*    onChange={this.handleChange}/>*/}
-                      <Form.Control name="currency" onChange={this.handleChange} >
-                          <option>USD</option>
-                          <option>MKD</option>
-                          <option>EUR</option>
+                      <Form.Label>Account Currency</Form.Label>
+                      <Form.Control
+                          as="select"
+                          name="currency"
+                          onChange={this.handleChange}
+                      >
+                          <option value="MKD">Macedonian denar - MKD</option>
+                          <option value="EUR">Euro - EUR</option>
                       </Form.Control>
                   </Form.Group>
 
@@ -58,7 +57,7 @@ class CreateAccount extends React.Component {
         // TODO
         createAccount(account)
             .then(res => {
-                history.push('/account/res.id');
+                history.push('/');
             })
             .catch(ex => {
                 console.log(ex, "EXCEPTION")
@@ -74,4 +73,4 @@ class CreateAccount extends React.Component {
     }
 }
 
-export default CreateAccount;
+export default withRouter(CreateAccount);

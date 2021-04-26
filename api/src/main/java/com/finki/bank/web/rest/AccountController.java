@@ -44,7 +44,7 @@ public class AccountController {
 
 
     }
-    //TODO:HELP ATA UPDATE STATUS NA ACC -> plus UPDATE STATUS SUSPENDED SO SAMO ADMIN PRIVILEGIJA
+    //TODO:UPDATE STATUS SUSPENDED SO SAMO ADMIN PRIVILEGIJA
     //public ResponseEntity<> updateStatus
 
     @GetMapping("/{id}")
@@ -58,7 +58,7 @@ public class AccountController {
     }
 
 
-    //TODO: delete mapp ing pred da brisi da se withrdawna parite od acc balance -> sepak samo disable na acc ke napravime
+    //TODO: sepak samo disable na acc ke napravime
 
 
 //    @GetMapping("/merchants")

@@ -53,3 +53,8 @@ export const getAccountTransactionsReport = (
     };
     return axios.get(`${apiUri}/${accountId}/search/report?sort=createdDate,desc${optionalParamsString}`, config);
 }
+
+
+export const createTransaction = (transaction) => {
+    return axios.post(apiUri,transaction);
+}

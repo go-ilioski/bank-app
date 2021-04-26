@@ -1,7 +1,9 @@
 import React from 'react';
 import {getAccountTransactions, getAccountTransactionsReport} from "../../service/transactionService";
-import {Button, Card, Pagination, Table} from "react-bootstrap";
+import {Button, Card, Col, FormControl, Pagination, Row, Table, Form} from "react-bootstrap";
 import Loader from "../Loader/Loader";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 
 class Account extends React.Component {
     constructor(props) {
@@ -14,8 +16,12 @@ class Account extends React.Component {
             page: 0,
             size: 5,
             sort: 'createdDate,amount,desc',
-            searchStartDate: '15-02-2021',
-            searchEndDate: '28-04-2021'
+            //searchStartDate: '15-02-2021',
+            searchStartDate: undefined,
+            //searchEndDate: '28-04-2021'
+            searchEndDate: undefined,
+            startAmount: undefined,
+            endAmount: undefined
         };
     }
 
@@ -24,13 +30,45 @@ class Account extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevState.page !== this.state.page) {
+
+        const {
+            searchStartDate,
+            searchEndDate,
+            startAmount,
+            endAmount
+        } = this.state;
+
+
+        if (prevState.page !== this.state.page ||
+            prevState.searchStartDate !== searchStartDate ||
+            prevState.searchEndDate !== searchEndDate ||
+            prevState.startAmount !== startAmount ||
+            prevState.endAmount !== endAmount
+        ) {
             this.loadTransactions();
         }
+
     }
 
     handlePagination(page) {
         this.setState({page})
+    }
+
+    getDateString = (date) =>{
+        let dateString = undefined;
+        if (date){
+            let day = date.getDate().toString()
+            let month = date.getMonth() + 1;
+            month = month.toString()
+            if(day.length === 1){
+                day = "0" + day;
+            }
+            if(month.length === 1){
+                month = "0" + month;
+            }
+            dateString = day + "-" + month + "-" + date.getFullYear();
+        }
+        return dateString;
     }
 
     loadTransactions = () => {
@@ -40,15 +78,23 @@ class Account extends React.Component {
             size,
             sort,
             searchStartDate,
-            searchEndDate
+            searchEndDate,
+            startAmount,
+            endAmount
         } = this.state;
+
+        let startDateString = this.getDateString(searchStartDate);
+        let endDateString = this.getDateString(searchEndDate);
+        console.log(startDateString, endDateString);
         getAccountTransactions(
             accountId,
             page,
             size,
             sort,
-            searchStartDate,
-            searchEndDate
+            startDateString,
+            endDateString,
+            startAmount,
+            endAmount
         ).then((response) => {
             this.setState({
                 loading: false,
@@ -69,7 +115,7 @@ class Account extends React.Component {
             pageCount;
 
         let items = [];
-        for (let i = startPage - 1; i <= endPage-1; i++) {
+        for (let i = startPage - 1; i <= endPage - 1; i++) {
             items.push(
                 <Pagination.Item
                     key={`pagination-${i}`}
@@ -103,7 +149,7 @@ class Account extends React.Component {
 
     renderTransactionTable = () => {
         const {transactions} = this.state;
-        return transactions && transactions.length-1 ?
+        return transactions && transactions.length ?
             (
                 <>
                     <Table striped bordered hover>
@@ -160,17 +206,110 @@ class Account extends React.Component {
         })
     }
 
+    dateFilter = () => {
+        const {accountId} = this.props;
+        const {
+            searchStartDate,
+            searchEndDate,
+            startAmount,
+            endAmount
+        } = this.state;
+
+
+    }
+
+
     render() {
-        console.log(this.state.transactionsCount);
-        const {loading} = this.state;
+        //console.log(this.state.transactionsCount);
+        const {
+            loading,
+            searchStartDate,
+            searchEndDate,
+            startAmount,
+            endAmount
+        } = this.state;
+
         return (
             <Card>
                 <Card.Body>
                     <Card.Title>
-                        Transactions
+                        <h3>Transactions</h3>
                     </Card.Title>
+                    <Row>
+                        <Col>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label>
+                                        Start Date
+                                    </Form.Label>
+                                    <DatePicker selected={searchStartDate}
+                                                style={{width: "100%"}}
+                                                onChange={date => this.setState({searchStartDate: date})}
+                                                dateFormat={"dd-MM-yyyy"}
+                                                customInput={(<FormControl type="text"/>)}
+                                    />
+                                </Form.Row>
+                            </Form.Group>
+
+                        </Col>
+
+                        <Col>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label>
+                                        End Date
+                                    </Form.Label>
+                                    <DatePicker selected={searchEndDate}
+                                                style={{width: "100%"}}
+                                                onChange={date => this.setState({searchEndDate: date})}
+                                                dateFormat={"dd-MM-yyyy"}
+                                                customInput={(<FormControl type="text"/>)}
+                                    />
+                                </Form.Row>
+                            </Form.Group>
+                        </Col>
+
+                        <Col>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label>
+                                        Start Amount
+                                    </Form.Label>
+                                    <FormControl type="number"
+                                                 name="startAmount"
+                                                 onChange={(event) => {
+                                                     let newState = {};
+                                                     newState[event.target.name] = event.target.value;
+                                                     this.setState(newState)
+                                                 }}
+                                    />
+                                </Form.Row>
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group>
+                                <Form.Row>
+                                    <Form.Label>
+                                        End Amount
+                                    </Form.Label>
+                                    <FormControl type="number"
+                                                 name="endAmount"
+                                                 onChange={(event) => {
+                                                     let newState = {};
+                                                     newState[event.target.name] = event.target.value;
+                                                     this.setState(newState)
+                                                 }}
+                                    />
+                                </Form.Row>
+                            </Form.Group>
+                        </Col>
+
+                    </Row>
+                    <br/>
                     <Loader loading={loading} render={this.renderTransactionTable}/>
                 </Card.Body>
+
+
                 <Button
                     variant="primary"
                     onClick={() => {

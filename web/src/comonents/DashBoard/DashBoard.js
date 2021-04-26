@@ -43,6 +43,13 @@ class DashBoard extends React.Component {
                                 this.props.history.push(`/account/${account.id}`)
                             }}
                         >View Transactions</Button>
+                        <Button
+                            variant="primary"
+                            onClick={() => {
+                                this.props.history.push(`/account/${account.id}/make-transaction`)
+                            }}
+                        >Make Transaction
+                        </Button>
                     </td>
                 </tr>
             );
@@ -69,12 +76,6 @@ class DashBoard extends React.Component {
             (
                 <p>
                     Currently you have no accounts.
-                    <Button
-                        variant="primary"
-                        onClick={() => {
-                            this.props.history.push(`/accountcreate`)
-                        }}
-                    >Create Account</Button>
                 </p>
             )
     }
@@ -88,7 +89,14 @@ class DashBoard extends React.Component {
                         My Accounts
                     </Card.Title>
                     <Loader loading={loading} render={this.renderAccountTable}/>
+                    <Button
+                        variant="primary"
+                        onClick={() => {
+                            this.props.history.push(`/account/create`)
+                        }}
+                    >Create Account</Button>
                 </Card.Body>
+
             </Card>
         );
     }

@@ -7,6 +7,7 @@ import {Container} from "react-bootstrap";
 import Account from "../Account/Account";
 import CreateAccount from "../Account/CreateAccount";
 import Favorites from "../Favorites/Favorites";
+import MakeTransaction from "../MakeTransaction/MakeTransaction";
 
 class Main extends React.Component {
 
@@ -17,15 +18,25 @@ class Main extends React.Component {
                 <Container>
                     <Router>
                         <Switch>
+
+                            <Route path="/account/create" component={CreateAccount}/>
+
+                            <Route path="/account/:id/make-transaction" render={({match}) => {
+                                return (<MakeTransaction accountId={match.params.id} />)
+                            }} />
+
                             <Route path="/account/:id" render={({match}) => {
                                 return (<Account accountId={match.params.id} />)
                             }} />
+
+
+                            {/*<Route path="/account/create" component={CreateAccount}/>*/}
+                            <Route path="/favorites" component={Favorites}/>
                             <Route path="/" component={DashBoard}/>
                             {/*<Route path="/account/create" render={() => {*/}
                             {/*    return (<CreateAccount />)*/}
                             {/*}} />*/}
-                            <Route path="/accountcreate" component={CreateAccount}/>
-                            <Route path="/favorites" component={Favorites}/>
+
                         </Switch>
                     </Router>
                 </Container>
