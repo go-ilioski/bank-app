@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Table} from "react-bootstrap";
+import {Button, Card, Col, Row, Table} from "react-bootstrap";
 import Loader from "../Loader/Loader";
 import {getUserAccounts} from "../../service/userService";
 import {withRouter} from "react-router-dom";
@@ -37,19 +37,25 @@ class DashBoard extends React.Component {
                     <td>{account.currency}</td>
                     <td>{account.balance.toFixed(2)}</td>
                     <td>
-                        <Button
-                            variant="primary"
-                            onClick={() => {
-                                this.props.history.push(`/account/${account.id}`)
-                            }}
-                        >View Transactions</Button>
-                        <Button
-                            variant="primary"
-                            onClick={() => {
-                                this.props.history.push(`/account/${account.id}/make-transaction`)
-                            }}
-                        >Make Transaction
-                        </Button>
+                        <Row>
+                            <Col>
+                                <Button
+                                    variant="primary"
+                                    onClick={() => {
+                                        this.props.history.push(`/account/${account.id}`)
+                                    }}
+                                >View Transactions</Button>
+                            </Col>
+                            <Col>
+                                <Button
+                                    variant="primary"
+                                    onClick={() => {
+                                        this.props.history.push(`/account/${account.id}/make-transaction`)
+                                    }}
+                                >Make Transaction
+                                </Button>
+                            </Col>
+                        </Row>
                     </td>
                 </tr>
             );

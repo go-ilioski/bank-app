@@ -31,7 +31,7 @@ class MakeTransaction extends React.Component {
     }
 
     render() {
-        console.log(this.state.type)
+        //console.log(this.state.type)
         const {error} = this.state;
         return (
             <Container>
