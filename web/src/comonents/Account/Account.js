@@ -4,6 +4,7 @@ import {Button, Card, Col, FormControl, Pagination, Row, Table, Form} from "reac
 import Loader from "../Loader/Loader";
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
+import "./Account.css"
 
 class Account extends React.Component {
     constructor(props) {
@@ -190,12 +191,19 @@ class Account extends React.Component {
         const {accountId} = this.props;
         const {
             searchStartDate,
-            searchEndDate
+            searchEndDate,
+            startAmount,
+            endAmount
         } = this.state;
+
+        let startDateString = this.getDateString(searchStartDate);
+        let endDateString = this.getDateString(searchEndDate);
         getAccountTransactionsReport(
             accountId,
-            searchStartDate,
-            searchEndDate
+            startDateString,
+            endDateString,
+            startAmount,
+            endAmount
         ).then((response) => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
@@ -204,18 +212,6 @@ class Account extends React.Component {
             document.body.appendChild(link);
             link.click();
         })
-    }
-
-    dateFilter = () => {
-        const {accountId} = this.props;
-        const {
-            searchStartDate,
-            searchEndDate,
-            startAmount,
-            endAmount
-        } = this.state;
-
-
     }
 
 
