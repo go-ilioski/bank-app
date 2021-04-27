@@ -24,6 +24,7 @@ class Register extends React.Component {
         const {error} = this.state;
         return (
           <Container>
+              <h1>Register</h1>
               <Form>
                   <Form.Group>
                       <Form.Label>First Name</Form.Label>

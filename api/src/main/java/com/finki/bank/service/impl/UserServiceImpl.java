@@ -95,7 +95,6 @@ public class UserServiceImpl implements UserService {
         if(currentUserService.getUserId() == null){
             throw new RuntimeException();
         }
-        //TODO: sto ako e prazna listata
         return accountMapper.convertToDto(currentUserService.getUser().getAccounts());
 
     }

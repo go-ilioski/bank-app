@@ -74,7 +74,6 @@ public class AccountServiceImpl implements AccountService {
 
 
 //        Account existingAccount = accountRepository.findById(accountDto.getId()).orElseThrow(EntityNotFoundException::new);
-        //TODO: sredi
 //        User owner = userRepository.findById(accountDto.getOwnerId()).orElseThrow(EntityNotFoundException::new);
 //                .orElseThrow( () -> new EntityNotFoundException());
         registerAccount.setOwner(ownerOfAccount);
@@ -98,7 +97,6 @@ public class AccountServiceImpl implements AccountService {
         if(id == null || accountRepository.findById(id).isEmpty())
             throw new RuntimeException();
 
-        //TODO: proveri ata dali e dobro i dali mozi so pomalce povici do baza
         Account accStatus = accountRepository.findById(id).get();
 
         if(status.equals(AccountStatusType.ACTIVE.toString()))

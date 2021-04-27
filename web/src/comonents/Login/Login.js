@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Container, Form} from "react-bootstrap";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {withAuthContext} from "../../context/AuthContext";
 import './Login.css';
 import {withRouter} from "react-router-dom";
@@ -19,6 +19,7 @@ class Login extends React.Component {
         const {error} = this.state;
         return (
           <Container>
+              <h1>Login</h1>
               <Form>
                   <Form.Group controlId="formBasicEmail">
                       <Form.Label>Email address</Form.Label>
@@ -46,10 +47,19 @@ class Login extends React.Component {
                           </div> :
                           ""
                   }
-                  <Button variant="primary" type="button" onClick={this.handleSubmit}>
-                      Login
-                  </Button>
+                  <Row>
+                      <Col>
+                          <Button variant="primary" type="button" onClick={this.handleSubmit}>
+                              Login
+                          </Button>
+                      </Col>
+                      <Col>
+                          <Button variant="success" href="/register">Register</Button>
+                      </Col>
+                  </Row>
+
               </Form>
+
           </Container>
         );
     }

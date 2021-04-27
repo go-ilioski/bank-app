@@ -272,6 +272,8 @@ class Account extends React.Component {
                                         Start Amount
                                     </Form.Label>
                                     <FormControl type="number"
+                                                 min="1"
+                                                 max="99999999"
                                                  name="startAmount"
                                                  onChange={(event) => {
                                                      let newState = {};
@@ -290,6 +292,8 @@ class Account extends React.Component {
                                     </Form.Label>
                                     <FormControl type="number"
                                                  name="endAmount"
+                                                 min="1"
+                                                 max="99999999"
                                                  onChange={(event) => {
                                                      let newState = {};
                                                      newState[event.target.name] = event.target.value;

@@ -44,7 +44,7 @@ public class AccountController {
 
 
     }
-    //TODO:UPDATE STATUS SUSPENDED SO SAMO ADMIN PRIVILEGIJA
+    //UPDATE STATUS SUSPENDED SO SAMO ADMIN PRIVILEGIJA
     //public ResponseEntity<> updateStatus
 
     @GetMapping("/{id}")
@@ -58,7 +58,7 @@ public class AccountController {
     }
 
 
-    //TODO: sepak samo disable na acc ke napravime
+    //sepak samo disable na acc da se napravi da ne se narusi vo bazata
 
 
 //    @GetMapping("/merchants")
